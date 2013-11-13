@@ -24,6 +24,10 @@ class Twilio::REST::Client
     def sms
       return Sms.new
     end
+
+    def messages
+      return Messages.new
+    end
   end
 
   def account
