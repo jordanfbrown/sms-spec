@@ -1,34 +1,49 @@
-class Twilio::REST::Client
-
-  def initialize(account_sid, auth_token)
-    $account_sid = account_sid
-  end
-
-  class Messages
-    include SmsSpec::Helpers
-
-    def create(opts={})
-      to = opts[:to]
-      body = opts[:body]
-      add_message Message.new(:number => to, :body => body)
+module Twilio::REST
+  class Client
+    def initialize(account_sid, auth_token)
+      $account_sid = account_sid
     end
-  end
 
-  class Sms
-    def messages
-      return Messages.new
+    def account
+      account = Account.new
+      account.class.send(:define_method, :sid, lambda { $account_sid })
+      account
     end
-  end
 
-  class Account
-    def sms
-      return Sms.new
+    class Message
+      attr_accessor :number
+      attr_accessor :body
+
+      include SmsSpec::Util
+
+      def initialize(opts={})
+        @number = sanitize opts[:number]
+        @body = opts[:body]
+      end
     end
-  end
 
-  def account
-    account = Account.new
-    account.class.send(:define_method, :sid, lambda { $account_sid })
-    account
+    class Sms
+      def messages
+        Messages.new
+      end
+    end
+
+    class Account
+      def messages
+        Messages.new
+      end
+
+      def sms
+        Sms.new
+      end
+    end
+
+    class Messages
+      include SmsSpec::Helpers
+
+      def create(opts = {})
+        add_message Message.new(number: opts[:to], :body => opts[:body])
+      end
+    end
   end
 end

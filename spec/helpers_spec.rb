@@ -43,8 +43,7 @@ describe SmsSpec::Helpers do
       add_message Message.new :number => "5555555512", :body => "Hello there"
       add_message Message.new :number => "5555555512", :body => "Hello there"
       add_message Message.new :number => "5555555512", :body => "Hello there"
-
-      messages.should have(3).messages
+      expect(messages.size).to eq(3)
     end
   end
 
