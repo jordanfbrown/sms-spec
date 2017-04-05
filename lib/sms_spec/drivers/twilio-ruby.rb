@@ -20,6 +20,14 @@ module Twilio::REST
         @number = sanitize opts[:number]
         @body = opts[:body]
       end
+
+      def sid
+        "Fake#{SecureRandom.hex}"
+      end
+
+      def status
+        'Queued'
+      end
     end
 
     class Sms
@@ -42,7 +50,9 @@ module Twilio::REST
       include SmsSpec::Helpers
 
       def create(opts = {})
-        add_message Message.new(number: opts[:to], :body => opts[:body])
+        Message.new(number: opts[:to], body: opts[:body]).tap do |message|
+          add_message(message)
+        end
       end
     end
   end
